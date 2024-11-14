@@ -14,5 +14,11 @@ export type Row = CellType[];
 
 export type GoalMap = {
     goal: Row[];
-}
+};
+
+export type UserCellType = null | { type: number };
+
+export type UserRow = UserCellType[];
+
+
 export type CandidateID = string;

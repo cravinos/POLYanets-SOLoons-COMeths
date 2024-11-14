@@ -4,8 +4,8 @@
   "description": "How i visualize the execution flow for the assessment part 1 will flow",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
+  "start": "npx tsc && node src/index.js"
+    },
   "keywords": [],
   "author": "",
   "license": "ISC",

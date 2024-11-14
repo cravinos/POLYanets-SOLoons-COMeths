@@ -1,5 +1,5 @@
 import { createPolyanet } from "./createPolyanet";
-import { verifyDeploment } from "./verifyDeployment";
+import { verifyDeployment } from "./verifyDeployment";
 import { getGoalMap } from "./getGoalMap";
 import { CandidateID, GoalMap } from "../types";
 
@@ -17,7 +17,7 @@ export async function deployPolyanets (candidateId: CandidateID): Promise<void>{
     }
 
     //verify usermap to goalmap
-    await verifyDeploment(candidateId,goalMap);
+    await verifyDeployment(candidateId);
 }
 //changed my approach from manually entering the coordinates to reversing it from the goal map
 function extractPolyanetCoords(goalMap: GoalMap): Array<{ row: number, column: number }> {

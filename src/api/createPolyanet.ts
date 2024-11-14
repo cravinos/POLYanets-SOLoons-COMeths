@@ -5,8 +5,12 @@ export async function createPolyanet(candidateId: CandidateID, row: number, colu
     let retries = 0;
     while (retries < 5 ) {
         try {
-            const response = await fetch (`https://challenge.crossmint.io/api/polyanets?row=${row}&column=${column}&candidateId=${candidateId}`,{
-                method: 'POST'
+            const response = await fetch(`https://challenge.crossmint.io/api/polyanets`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ row, column, candidateId }),
             });
             if( response.ok ) {
                 console.log(`successfully added a POLYANET at ROW: ${row} COLUMN: ${column}`)
