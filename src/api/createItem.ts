@@ -1,7 +1,7 @@
 import { CandidateID } from "../types";
 
 
-export async function createEntity(candidateId: CandidateID, row: number, column:number, type:string): Promise<void> {
+export async function createItem(candidateId: CandidateID, row: number, column:number, type:string): Promise<void> {
     let retries = 0;
     while (retries < 5) {
         try {

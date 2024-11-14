@@ -6,7 +6,7 @@
 - **Error Handling**: 
   - For non-429 errors occurring during entity creation, the system will retry up to a maximum of 5 times before exiting the runtime environment.
 - **Unified Creation and Deletion Logic**:
-  - Combined all entity creation logic (POLYanets, SOLoons, COMeths) into a single `createEntity.ts` file.
+  - Combined all entity creation logic (POLYanets, SOLoons, COMeths) into a single `createItem.ts` file.
   - Similarly, deletion logic for these entities has been unified.
 - **Verification**: Added an extra verification step at the end. 
 

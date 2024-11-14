@@ -1,4 +1,4 @@
-import { createEntity } from "./createItem";
+import { createItem } from "./createItem";
 import { verifyDeployment } from "./verifyDeployment";
 import { getGoalMap } from "./getGoalMap";
 import { CandidateID, GoalMap } from "../types";
@@ -16,10 +16,10 @@ export async function deployItem (candidateId: CandidateID): Promise<void>{
     //editing switch 
     for (const {row,column,type} of coords){
         if(type===null){
-            await createEntity(candidateId, row,column,type);
+            await createItem(candidateId, row,column,type);
         }
         if(type !==null){
-            await createEntity(candidateId,row,column,type);
+            await createItem(candidateId,row,column,type);
         }
     }
 
