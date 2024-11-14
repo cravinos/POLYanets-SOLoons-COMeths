@@ -1,6 +1,6 @@
 import { GoalMap, CandidateID } from "../types";
 import { getGoalMap } from "./getGoalMap";
-import { createPolyanet } from "./createPolyanet";
+import { createEntity } from "./createEntity";
 import { deleteItem } from "./deleteItem";
 
 export interface UserMap {
@@ -33,18 +33,19 @@ export async function verifyDeployment(candidateId: string, maxRetry: number = 5
                     if (goalMap.goal[row][col] === 'SPACE') {
                         if (userMap.map.content[row][col] !== null) {
                             // Incorrect item found, attempt to delete it
-                            await deleteItem(candidateId, row, col, 'polyanet');
+                            await deleteItem(candidateId, row, col, 'polyanets');
                             hasErrors = true;
                         }
                     } else if (goalMap.goal[row][col] === 'POLYANET') {
                         const userCell = userMap.map.content[row][col];
                         if (userCell === null || (userCell && userCell.type !== 0)) {
                             // Should be a POLYANET but isn't, attempt to add it
-                            await createPolyanet(candidateId, row, col);
+                            //FIX
+                            // await createEntity(candidateId, row, col, type);
                             hasErrors = true;
                         }
                     }
-                    // If it's not SPACE or POLYANET, we continue (ignore other values)
+                    // If it's not SPACE or POLYANET, we continue (ignore other values) For now 
                 }
             }
 

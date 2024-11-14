@@ -1,10 +1,10 @@
 import { CANDIDATE_ID } from './constants';
-import { deployPolyanets } from "./api/deployPolyanets";
+import { deployItem } from "./api/deployItem";
 
 
 async function main(){ 
     try {
-       await deployPolyanets(CANDIDATE_ID);
+       await deployItem(CANDIDATE_ID);
     } catch ( error ){
         console.error("an error occured", error);
     }
