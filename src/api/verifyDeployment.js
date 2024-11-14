@@ -11,37 +11,53 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.verifyDeployment = verifyDeployment;
 const getGoalMap_1 = require("./getGoalMap");
-function verifyDeployment(candidateId) {
-    return __awaiter(this, void 0, void 0, function* () {
-        try {
-            const goalMap = yield (0, getGoalMap_1.getGoalMap)(candidateId);
-            const response = yield fetch(`https://challenge.crossmint.io/api/map/${candidateId}`);
-            if (!response.ok)
-                throw new Error(`Failed to fetch user map: ${response.statusText}`);
-            const userMap = yield response.json();
-            for (let row = 0; row < goalMap.goal.length; row++) {
-                if (goalMap.goal[row].length !== userMap.map.content[row].length) {
-                    throw new Error(`Row ${row} lengths do not match.`);
+const createPolyanet_1 = require("./createPolyanet");
+const deleteItem_1 = require("./deleteItem");
+function verifyDeployment(candidateId_1) {
+    return __awaiter(this, arguments, void 0, function* (candidateId, maxRetry = 5) {
+        for (let retryCount = 0; retryCount < maxRetry; retryCount++) {
+            try {
+                const goalMap = yield (0, getGoalMap_1.getGoalMap)(candidateId);
+                const response = yield fetch(`https://challenge.crossmint.io/api/map/${candidateId}`);
+                if (!response.ok)
+                    throw new Error(`Failed to fetch user map: ${response.statusText}`);
+                const userMap = yield response.json();
+                let hasErrors = false;
+                for (let row = 0; row < goalMap.goal.length; row++) {
+                    if (goalMap.goal[row].length !== userMap.map.content[row].length) {
+                        throw new Error(`Row ${row} lengths do not match.`);
+                    }
+                    for (let col = 0; col < goalMap.goal[row].length; col++) {
+                        if (goalMap.goal[row][col] === 'SPACE') {
+                            if (userMap.map.content[row][col] !== null) {
+                                // Incorrect item found, attempt to delete it
+                                yield (0, deleteItem_1.deleteItem)(candidateId, row, col, 'polyanet');
+                                hasErrors = true;
+                            }
+                        }
+                        else if (goalMap.goal[row][col] === 'POLYANET') {
+                            const userCell = userMap.map.content[row][col];
+                            if (userCell === null || (userCell && userCell.type !== 0)) {
+                                // Should be a POLYANET but isn't, attempt to add it
+                                yield (0, createPolyanet_1.createPolyanet)(candidateId, row, col);
+                                hasErrors = true;
+                            }
+                        }
+                        // If it's not SPACE or POLYANET, we continue (ignore other values)
+                    }
                 }
-                for (let col = 0; col < goalMap.goal[row].length; col++) {
-                    if (goalMap.goal[row][col] === 'SPACE') {
-                        if (userMap.map.content[row][col] !== null) {
-                            throw new Error(`Expected space at (${row}, ${col}), but found ${JSON.stringify(userMap.map.content[row][col])}`);
-                        }
-                    }
-                    else if (goalMap.goal[row][col] === 'POLYANET') {
-                        const userCell = userMap.map.content[row][col];
-                        if (userCell === null || (userCell && userCell.type !== 0)) {
-                            throw new Error(`Expected POLYANET at (${row}, ${col}), found ${JSON.stringify(userCell)} instead`);
-                        }
-                    }
+                if (!hasErrors) {
+                    console.log('Verification complete. Deployment matches goal map.');
+                    return;
                 }
             }
-            console.log('Verification complete. Deployment matches goal map.');
+            catch (error) {
+                console.error(`Verification attempt ${retryCount + 1} failed:`, error);
+            }
+            if (retryCount < maxRetry - 1) {
+                console.log(`Retrying verification...`);
+            }
         }
-        catch (error) {
-            console.error("Verification failed:", error);
-            throw error;
-        }
+        throw new Error("Verification failed after multiple attempts.");
     });
 }

@@ -3,9 +3,10 @@
   "version": "1.0.0",
   "description": "How i visualize the execution flow for the assessment part 1 will flow",
   "main": "index.js",
-  "scripts": {
-  "start": "npx tsc && node src/index.js"
-    },
+ "scripts": {
+  "start": "npx tsc && node src/index.js",
+  "verification": "npx tsc && node src/runVerification.js"
+},
   "keywords": [],
   "author": "",
   "license": "ISC",

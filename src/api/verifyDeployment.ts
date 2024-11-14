@@ -1,5 +1,7 @@
 import { GoalMap, CandidateID } from "../types";
 import { getGoalMap } from "./getGoalMap";
+import { createPolyanet } from "./createPolyanet";
+import { deleteItem } from "./deleteItem";
 
 export interface UserMap {
     map: {
@@ -11,37 +13,52 @@ export interface UserMap {
     };
 }
 
-export async function verifyDeployment(candidateId: string): Promise<void> {
-    try {
-        const goalMap: GoalMap = await getGoalMap(candidateId);
+export async function verifyDeployment(candidateId: string, maxRetry: number = 5): Promise<void> {
+    for (let retryCount = 0; retryCount < maxRetry; retryCount++) {
+        try {
+            const goalMap: GoalMap = await getGoalMap(candidateId);
 
-        const response = await fetch(`https://challenge.crossmint.io/api/map/${candidateId}`);
-        if (!response.ok) throw new Error(`Failed to fetch user map: ${response.statusText}`);
+            const response = await fetch(`https://challenge.crossmint.io/api/map/${candidateId}`);
+            if (!response.ok) throw new Error(`Failed to fetch user map: ${response.statusText}`);
 
-        const userMap: UserMap = await response.json();
+            const userMap: UserMap = await response.json();
 
+            let hasErrors = false;
 
-        for (let row = 0; row < goalMap.goal.length; row++) {
-            if (goalMap.goal[row].length !== userMap.map.content[row].length) {
-                throw new Error(`Row ${row} lengths do not match.`);
-            }
-            for (let col = 0; col < goalMap.goal[row].length; col++) {
-                if (goalMap.goal[row][col] === 'SPACE') {
-                    if (userMap.map.content[row][col] !== null) {
-                        throw new Error(`Expected space at (${row}, ${col}), but found ${JSON.stringify(userMap.map.content[row][col])}`);
+            for (let row = 0; row < goalMap.goal.length; row++) {
+                if (goalMap.goal[row].length !== userMap.map.content[row].length) {
+                    throw new Error(`Row ${row} lengths do not match.`);
+                }
+                for (let col = 0; col < goalMap.goal[row].length; col++) {
+                    if (goalMap.goal[row][col] === 'SPACE') {
+                        if (userMap.map.content[row][col] !== null) {
+                            // Incorrect item found, attempt to delete it
+                            await deleteItem(candidateId, row, col, 'polyanet');
+                            hasErrors = true;
+                        }
+                    } else if (goalMap.goal[row][col] === 'POLYANET') {
+                        const userCell = userMap.map.content[row][col];
+                        if (userCell === null || (userCell && userCell.type !== 0)) {
+                            // Should be a POLYANET but isn't, attempt to add it
+                            await createPolyanet(candidateId, row, col);
+                            hasErrors = true;
+                        }
                     }
-                } else if (goalMap.goal[row][col] === 'POLYANET') {
-                    const userCell = userMap.map.content[row][col];
-                    if (userCell === null || (userCell && userCell.type !== 0)) {
-                        throw new Error(`Expected POLYANET at (${row}, ${col}), found ${JSON.stringify(userCell)} instead`);
-                    }
+                    // If it's not SPACE or POLYANET, we continue (ignore other values)
                 }
             }
+
+            if (!hasErrors) {
+                console.log('Verification complete. Deployment matches goal map.');
+                return; 
+            }
+        } catch (error) {
+            console.error(`Verification attempt ${retryCount + 1} failed:`, error);
         }
 
-        console.log('Verification complete. Deployment matches goal map.');
-    } catch (error) {
-        console.error("Verification failed:", error);
-        throw error; 
+        if (retryCount < maxRetry - 1) {
+            console.log(`Retrying verification...`);
+        }
     }
+    throw new Error("Verification failed after multiple attempts.");
 }
