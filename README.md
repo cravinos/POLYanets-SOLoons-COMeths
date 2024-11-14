@@ -9,7 +9,7 @@
   - Combined all entity creation logic (POLYanets, SOLoons, COMeths) into a single `createItem.ts` file.
   - Similarly, deletion logic for these entities has been unified.
 - **Verification**: Added an extra verification step at the end. 
-
+    - Added verification of direction for Comeths
 ---
 
 ## How to Run the Application
