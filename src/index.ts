@@ -1,10 +1,12 @@
-import { getGoalMap } from "./api/getGoalMap";
-import CANDIDATE_ID from './constants';
+import { CANDIDATE_ID } from './constants';
+import { deployPolyanets } from "./api/deployPolyanets";
 
 
 async function main(){ 
     try {
-        const goalMap = await getGoalMap(CANDIDATE_ID);
-        await 
+       await deployPolyanets(CANDIDATE_ID);
+    } catch ( error ){
+        console.error("an error occured", error);
     }
 }
+main();

@@ -4,7 +4,7 @@
  * 
  */
 
-import {GoalMap, CandidateID} from '../types.ts';
+import {GoalMap, CandidateID} from '../types';
 
 export async function getGoalMap(candidateId: CandidateID): Promise<GoalMap> {
     //fetch and parse goal map 

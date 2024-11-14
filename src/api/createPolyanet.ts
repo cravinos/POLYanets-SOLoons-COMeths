@@ -1,7 +1,7 @@
 import { CandidateID } from "../types";
 
 
-export async function createPolyanet(candidateId: CandidateID, row: number, column,number): Promise<void> {
+export async function createPolyanet(candidateId: CandidateID, row: number, column:number): Promise<void> {
     let retries = 0;
     while (retries < 5 ) {
         try {
