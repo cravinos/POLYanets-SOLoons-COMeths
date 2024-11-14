@@ -1,4 +1,4 @@
-import { createEntity } from "./createEntity";
+import { createEntity } from "./createItem";
 import { verifyDeployment } from "./verifyDeployment";
 import { getGoalMap } from "./getGoalMap";
 import { CandidateID, GoalMap } from "../types";

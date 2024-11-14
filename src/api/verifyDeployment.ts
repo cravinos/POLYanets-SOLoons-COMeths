@@ -1,6 +1,6 @@
 import { GoalMap, CandidateID } from "../types";
 import { getGoalMap } from "./getGoalMap";
-import { createEntity } from "./createEntity";
+import { createEntity } from "./createItem";
 import { deleteItem } from "./deleteItem";
 
 export interface UserMap {
@@ -13,8 +13,17 @@ export interface UserMap {
     };
 }
 
+const dictionary = {
+    POLYANET: 0,
+    COMETH:2,
+    SOLOON:1
+
+}
+
 export async function verifyDeployment(candidateId: string, maxRetry: number = 5): Promise<void> {
-    for (let retryCount = 0; retryCount < maxRetry; retryCount++) {
+    let retryCount = 0;
+    
+    while (retryCount < maxRetry) {
         try {
             const goalMap: GoalMap = await getGoalMap(candidateId);
 
@@ -30,22 +39,32 @@ export async function verifyDeployment(candidateId: string, maxRetry: number = 5
                     throw new Error(`Row ${row} lengths do not match.`);
                 }
                 for (let col = 0; col < goalMap.goal[row].length; col++) {
-                    if (goalMap.goal[row][col] === 'SPACE') {
-                        if (userMap.map.content[row][col] !== null) {
-                            // Incorrect item found, attempt to delete it
-                            await deleteItem(candidateId, row, col, 'polyanets');
+                    const goalCell = goalMap.goal[row][col];
+                    const userCell = userMap.map.content[row][col];
+
+                    if (goalCell === 'SPACE') {
+                        if (userCell !== null) {
+                            const type = determineItemType(userCell.type);
+                            await deleteItem(candidateId, row, col, type);
                             hasErrors = true;
                         }
-                    } else if (goalMap.goal[row][col] === 'POLYANET') {
-                        const userCell = userMap.map.content[row][col];
-                        if (userCell === null || (userCell && userCell.type !== 0)) {
-                            // Should be a POLYANET but isn't, attempt to add it
-                            //FIX
-                            // await createEntity(candidateId, row, col, type);
-                            hasErrors = true;
-                        }
+                        continue;
                     }
-                    // If it's not SPACE or POLYANET, we continue (ignore other values) For now 
+                    
+                    if (userCell === null || (userCell && userCell.type !== dictionary[goalCell])) {
+                        let type = goalCell;
+                        await createEntity(candidateId, row, col, type);
+                        hasErrors = true;
+                    }
+
+                    function determineItemType(typeCode: number): string {
+                        for (const[key, value] of Object.entries(dictionary)) {
+                            if (value === typeCode) {
+                                return key.toLowerCase()+'s';
+                            }
+                        }
+                        throw new Error("Unknown item type");
+                    }
                 }
             }
 
@@ -55,9 +74,10 @@ export async function verifyDeployment(candidateId: string, maxRetry: number = 5
             }
         } catch (error) {
             console.error(`Verification attempt ${retryCount + 1} failed:`, error);
+            retryCount++;
         }
 
-        if (retryCount < maxRetry - 1) {
+        if (retryCount < maxRetry) {
             console.log(`Retrying verification...`);
         }
     }

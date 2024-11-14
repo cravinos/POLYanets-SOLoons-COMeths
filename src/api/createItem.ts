@@ -25,6 +25,7 @@ export async function createEntity(candidateId: CandidateID, row: number, column
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({ row, column, color:lccolor, candidateId}),
+                    
                 });
             } else if (type.includes('COMETH')) {
                 const [direction, entityType] = type.split('_')
