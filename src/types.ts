@@ -22,3 +22,13 @@ export type UserRow = UserCellType[];
 
 
 export type CandidateID = string;
+
+export interface UserMap {
+    map: {
+        _id: string;
+        content: Array<Array<null | { type: number; direction?: string; color?: string }>>;
+        candidateId: string;
+        phase: number;
+        __v: number;
+    };
+}
