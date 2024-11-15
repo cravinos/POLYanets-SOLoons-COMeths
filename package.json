@@ -3,16 +3,25 @@
   "version": "1.0.0",
   "description": "How i visualize the execution flow for the assessment part 1 will flow",
   "main": "index.js",
- "scripts": {
-  "start": "npx tsc && node src/index.js",
-  "verification": "npx tsc && node src/runVerification.js"
-},
+  "scripts": {
+    "start": "npx tsc && node src/index.js",
+    "verification": "npx tsc && node src/runVerification.js"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@eslint/js": "^9.14.0",
     "@types/node": "^22.9.0",
-    "typescript": "^5.6.3"
+    "@typescript-eslint/eslint-plugin": "^8.14.0",
+    "@typescript-eslint/parser": "^8.14.0",
+    "eslint": "^9.14.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.2.1",
+    "globals": "^15.12.0",
+    "prettier": "^3.3.3",
+    "typescript": "^5.6.3",
+    "typescript-eslint": "^8.14.0"
   },
   "dependencies": {
     "node-fetch": "^3.3.2"
