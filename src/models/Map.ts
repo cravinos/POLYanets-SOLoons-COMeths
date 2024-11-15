@@ -17,12 +17,4 @@ export class Map {
         return coordinates;
     }
 
-    static getAdjacentPositions(row: number, col: number, rows: number, cols: number): [number, number][] {
-        const positions: [number, number][] = [];
-        if (row > 0) positions.push([row - 1, col]); // up
-        if (row < rows - 1) positions.push([row + 1, col]); // down
-        if (col > 0) positions.push([row, col - 1]); // left
-        if (col < cols - 1) positions.push([row, col + 1]); // right
-        return positions;
-    }
 }

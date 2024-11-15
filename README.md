@@ -6,10 +6,12 @@
 - **Error Handling**: 
   - For non-429 errors occurring during entity creation, the system will retry up to a maximum of 5 times before exiting the runtime environment.
 - **Unified Creation and Deletion Logic**:
-  - Combined all entity creation logic (POLYanets, SOLoons, COMeths) into a single `createItem.ts` file.
-  - Similarly, deletion logic for these entities has been unified.
+  - Combined all entity creation logic (POLYanets, SOLoons, COMeths) into a single `createItem` function held inside the APIClient Class
+  - Similarly, deletion logic for these entities has been unified as a property of DeleteItem inside the APIClient class
 - **Verification**: Added an extra verification step at the end. 
     - Added verification of direction for Comeths
+    - Verifies and tests that all items added to userMap Match
+    - conducts verification of goalMap with userMap to assure endpoint after update is correct with the dictionary values held in `constants.ts`
 ---
 
 ## How to Run the Application
