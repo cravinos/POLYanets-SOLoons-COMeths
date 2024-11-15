@@ -1,7 +1,9 @@
 import { CandidateID } from '../types';
 import { APIClient } from './APIClient';
 import { Map } from '../models/Map';
-import { dictionary, determineItemType } from '../utils/entityUtils';
+import { determineItemType, getAdjacentPositions } from '../utils/entityUtils';
+import { dictionary } from '../constants';
+
 
 export async function verifyDeployment(candidateId: CandidateID, maxRetry: number = 5): Promise<void> {
     const apiClient = new APIClient(candidateId);
@@ -70,7 +72,7 @@ export async function verifyDeployment(candidateId: CandidateID, maxRetry: numbe
                             continue;
                         }
 
-                        const adjacentPositions = Map.getAdjacentPositions(row, col, goalMap.length, goalMap[row].length);
+                        const adjacentPositions = getAdjacentPositions(row, col, goalMap.length, goalMap[row].length);
                         let hasAdjacentPolyanet = false;
 
                         for (const [adjRow, adjCol] of adjacentPositions) {
